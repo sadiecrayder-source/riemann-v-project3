@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Riemann-V | Archives</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root { --pink: #ff007f; --bg: #0a0508; }
+        body { background: var(--bg); color: white; font-family: 'Inter'; margin: 0; text-align: center; }
+        nav { background: #1a0d14; padding: 1rem 5%; display: flex; justify-content: space-between; border-bottom: 2px solid var(--pink); }
+        nav a { color: white; text-decoration: none; margin-left: 20px; opacity: 0.6; font-weight: bold; }
+        .gallery { display: flex; justify-content: center; gap: 30px; padding: 50px; flex-wrap: wrap; }
+        .portrait { width: 280px; background: #1a0d14; border: 1px solid var(--pink); border-radius: 15px; padding: 15px; }
+        .portrait img { width: 100%; border-radius: 10px; height: 350px; object-fit: cover; }
+        .game-box { margin: 50px auto; max-width: 600px; border: 2px dashed var(--pink); padding: 40px; border-radius: 20px; }
+        .emoji { position: fixed; font-size: 3rem; animation: fall 1s forwards; z-index: 2000; }
+        @keyframes fall { from { top: -50px; opacity: 1; } to { top: 100vh; opacity: 0; } }
+        button { background: var(--pink); color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div style="font-family:'Orbitron'; color:var(--pink)">RIEMANN-V</div>
+        <div><a href="index.html">HOME</a><a href="lecture.html">LECTURE</a><a href="visualizer.html">SIMULATOR</a><a href="archives.html" style="color:var(--pink); opacity:1">ARCHIVES</a><a href="audit.html">VERIFY</a></div>
+    </nav>
+
+    <div class="gallery">
+        <div class="portrait"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Bernhard_Riemann.jpg"><b>Bernhard Riemann</b></div>
+        <div class="portrait"><img src="https://upload.wikimedia.org/wikipedia/commons/3/39/GodfreyKneller-IsaacNewton-1689.jpg"><b>Isaac Newton</b></div>
+        <div class="portrait"><img src="https://upload.wikimedia.org/wikipedia/commons/d/df/Gottfried_Wilhelm_Leibniz%2C_Bernhard_Christoph_Francke.jpg"><b>Gottfried Leibniz</b></div>
+    </div>
+
+    <div class="game-box">
+        <h3>Guess Who Said It:</h3>
+        <p>"Nature's great book is written in mathematical symbols."</p>
+        <button onclick="guess(false)">Newton</button>
+        <button onclick="guess(true)">Galileo</button>
+        <button onclick="guess(false)">Leibniz</button>
+        <p id="gameFeedback"></p>
+    </div>
+
+    <script>
+        function guess(correct) {
+            if(correct) {
+                confetti({ particleCount: 150, colors: ['#ff007f'] });
+                document.getElementById('gameFeedback').innerText = "Answer: Galileo Galilei";
+            } else {
+                for(let i=0; i<8; i++) {
+                    const e = document.createElement('div'); e.innerText = "👎"; e.className = "emoji";
+                    e.style.left = Math.random()*100+"vw"; document.body.appendChild(e);
+                    setTimeout(() => e.remove(), 1000);
+                }
+                document.getElementById('gameFeedback').innerText = "Try Again!";
+            }
+        }
+    </script>
+</body>
+</html>
