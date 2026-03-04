@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Riemann-V | Masterclass</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root { --pink: #ff007f; --bg: #0a0508; }
+        body { background: var(--bg); color: #e6edf3; font-family: 'Inter'; margin: 0; line-height: 1.8; }
+        nav { background: #1a0d14; padding: 1rem 5%; display: flex; justify-content: space-between; border-bottom: 2px solid var(--pink); position: sticky; top: 0; z-index: 1000; }
+        nav a { color: white; text-decoration: none; margin-left: 20px; opacity: 0.6; font-weight: bold; }
+        .content { padding: 60px 18%; }
+        section { margin-bottom: 100px; padding: 40px; background: rgba(255,255,255,0.02); border-left: 5px solid var(--pink); border-radius: 15px; }
+        h2 { font-family: 'Orbitron'; color: var(--pink); }
+        .trivia-box { background: #1a0d14; border: 2px solid var(--pink); padding: 40px; text-align: center; border-radius: 20px; position: relative; }
+        .btn { background: var(--pink); color: white; border: none; padding: 15px 30px; cursor: pointer; border-radius: 8px; font-weight: bold; font-family: 'Orbitron'; }
+        .emoji-drop { position: fixed; font-size: 3rem; animation: fall 1s forwards; z-index: 3000; }
+        @keyframes fall { from { top: -50px; opacity: 1; } to { top: 100vh; opacity: 0; } }
+    </style>
+</head>
+<body>
+    <nav>
+        <div style="font-family:'Orbitron'; color:var(--pink)">RIEMANN-V</div>
+        <div><a href="index.html">HOME</a><a href="lecture.html" style="color:var(--pink); opacity:1;">LECTURE</a><a href="visualizer.html">SIMULATOR</a><a href="archives.html">ARCHIVES</a><a href="audit.html">VERIFY</a></div>
+    </nav>
+    <div class="content">
+        <h1>Theoretical Architecture</h1>
+        
+        <section>
+            <h2>The Limit Definition</h2>
+            <p>Integration is the infinite summation of rectangles. Formally:</p>
+            \[ \int_{a}^{b} f(x) \, dx = \lim_{n \to \infty} \sum_{i=1}^{n} f(x_i^*) \Delta x \]
+            <p>On the AP Exam, remember: if the limit exists, the function is <i>Riemann Integrable</i>. This requires the function to be bounded and continuous (or have only finitely many jump discontinuities).</p>
+        </section>
+
+        
+
+        <section>
+            <h2>Monotonicity & Estimation</h2>
+            <p>Predicting over/under estimates is a core AP Skill:</p>
+            <ul>
+                <li><b>Increasing Functions:</b> RRAM is an overestimate. LRAM is an underestimate.</li>
+                <li><b>Decreasing Functions:</b> LRAM is an overestimate. RRAM is an underestimate.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Trapezoidal Accuracy</h2>
+            <p>The Trapezoid Rule uses the average of the Left and Right sums. Its error is directly related to the <b>concavity</b> (second derivative) of the function.</p>
+            \[ T_n = \frac{\Delta x}{2} [f(x_0) + 2f(x_1) + \dots + f(x_n)] \]
+        </section>
+
+        <div class="trivia-box">
+            <h2>AP Trivia Challenge</h2>
+            <p id="qText" style="font-size: 1.2rem;"></p>
+            <input type="text" id="triviaAns" placeholder="Answer..." style="padding:10px; margin-bottom:10px; background:transparent; border:1px solid var(--pink); color:white; border-radius:5px;">
+            <br>
+            <button onclick="checkTrivia()" class="btn">CHECK ANSWER</button>
+            <p id="triviaFeedback" style="margin-top:20px; font-weight:bold;"></p>
+        </div>
+        <div style="height: 400px;"></div>
+    </div>
+
+    <script>
+        const questions = [
+            {q: "Is a Right Sum an overestimate for an increasing function?", a: "yes"},
+            {q: "Which rule uses the average of LRAM and RRAM?", a: "trapezoidal"},
+            {q: "Does increasing 'n' decrease error?", a: "yes"}
+        ];
+        let idx = 0;
+
+        function loadQ() { document.getElementById('qText').innerText = questions[idx].q; }
+
+        function spawnThumbsDown() {
+            for(let i=0; i<8; i++) {
+                const emoji = document.createElement('div');
+                emoji.innerText = "👎";
+                emoji.className = "emoji-drop";
+                emoji.style.left = Math.random() * 100 + "vw";
+                document.body.appendChild(emoji);
+                setTimeout(() => emoji.remove(), 1000);
+            }
+        }
+
+        function checkTrivia() {
+            const user = document.getElementById('triviaAns').value.toLowerCase();
+            if(user === questions[idx].a) {
+                confetti({ particleCount: 150, spread: 70, colors: ['#ff007f', '#ffffff'] });
+                document.getElementById('triviaFeedback').innerText = "Answer: " + questions[idx].a;
+                idx = (idx + 1) % questions.length;
+                setTimeout(() => { 
+                    document.getElementById('triviaAns').value = "";
+                    document.getElementById('triviaFeedback').innerText = "";
+                    loadQ(); 
+                }, 3000);
+            } else {
+                spawnThumbsDown();
+                document.getElementById('triviaFeedback').innerText = "Incorrect!";
+            }
+        }
+        loadQ();
+    </script>
+</body>
+</html>
