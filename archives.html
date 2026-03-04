@@ -6,16 +6,13 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root { --pink: #ff007f; --bg: #0a0508; }
-        body { background: var(--bg); color: white; font-family: 'Inter'; margin: 0; text-align: center; }
-        nav { background: #1a0d14; padding: 1rem 5%; display: flex; justify-content: space-between; border-bottom: 2px solid var(--pink); }
+        body { background: var(--bg); color: white; font-family: 'Inter'; margin: 0; padding-bottom: 100px; }
+        nav { background: #1a0d14; padding: 1rem 5%; display: flex; justify-content: space-between; border-bottom: 2px solid var(--pink); position: sticky; top: 0; }
         nav a { color: white; text-decoration: none; margin-left: 20px; opacity: 0.6; font-weight: bold; }
-        .gallery { display: flex; justify-content: center; gap: 30px; padding: 50px; flex-wrap: wrap; }
-        .portrait { width: 280px; background: #1a0d14; border: 1px solid var(--pink); border-radius: 15px; padding: 15px; }
-        .portrait img { width: 100%; border-radius: 10px; height: 350px; object-fit: cover; }
-        .game-box { margin: 50px auto; max-width: 600px; border: 2px dashed var(--pink); padding: 40px; border-radius: 20px; }
-        .emoji { position: fixed; font-size: 3rem; animation: fall 1s forwards; z-index: 2000; }
-        @keyframes fall { from { top: -50px; opacity: 1; } to { top: 100vh; opacity: 0; } }
-        button { background: var(--pink); color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; margin: 5px; }
+        .container { padding: 60px 15%; }
+        .trivia-box { background: #1a0d14; border: 2px solid var(--pink); padding: 30px; text-align: center; border-radius: 15px; margin-top: 40px; }
+        .fact-list { column-count: 2; gap: 40px; }
+        li { margin-bottom: 15px; color: #ccc; }
     </style>
 </head>
 <body>
@@ -23,36 +20,36 @@
         <div style="font-family:'Orbitron'; color:var(--pink)">RIEMANN-V</div>
         <div><a href="index.html">HOME</a><a href="lecture.html">LECTURE</a><a href="visualizer.html">SIMULATOR</a><a href="archives.html" style="color:var(--pink); opacity:1">ARCHIVES</a><a href="audit.html">VERIFY</a></div>
     </nav>
+    <div class="container">
+        <h1>Historical Facts</h1>
+        <ul class="fact-list">
+            <li>Riemann published his work on integration in 1854.</li>
+            <li>Archimedes used the "Method of Exhaustion" in 250 BC, a precursor to Riemann sums.</li>
+            <li>Leibniz created the "S" symbol (integral) from the word "Summa".</li>
+            <li>Cauchy was the first to define the integral of a continuous function using limits.</li>
+            <li>A function must be bounded to be Riemann integrable.</li>
+            <li>The error in a Trapezoidal sum is proportional to the second derivative.</li>
+        </ul>
 
-    <div class="gallery">
-        <div class="portrait"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Bernhard_Riemann.jpg"><b>Bernhard Riemann</b></div>
-        <div class="portrait"><img src="https://upload.wikimedia.org/wikipedia/commons/3/39/GodfreyKneller-IsaacNewton-1689.jpg"><b>Isaac Newton</b></div>
-        <div class="portrait"><img src="https://upload.wikimedia.org/wikipedia/commons/d/df/Gottfried_Wilhelm_Leibniz%2C_Bernhard_Christoph_Francke.jpg"><b>Gottfried Leibniz</b></div>
+        <div class="trivia-box">
+            <h3>Quick Lore Trivia</h3>
+            <p id="q"></p>
+            <input type="text" id="ans" style="padding:10px; background:transparent; border:1px solid var(--pink); color:white;">
+            <button onclick="check()" style="padding:10px; background:var(--pink); border:none; color:white; cursor:pointer;">SUBMIT</button>
+            <p id="fb"></p>
+        </div>
     </div>
-
-    <div class="game-box">
-        <h3>Guess Who Said It:</h3>
-        <p>"Nature's great book is written in mathematical symbols."</p>
-        <button onclick="guess(false)">Newton</button>
-        <button onclick="guess(true)">Galileo</button>
-        <button onclick="guess(false)">Leibniz</button>
-        <p id="gameFeedback"></p>
-    </div>
-
     <script>
-        function guess(correct) {
-            if(correct) {
-                confetti({ particleCount: 150, colors: ['#ff007f'] });
-                document.getElementById('gameFeedback').innerText = "Answer: Galileo Galilei";
-            } else {
-                for(let i=0; i<8; i++) {
-                    const e = document.createElement('div'); e.innerText = "👎"; e.className = "emoji";
-                    e.style.left = Math.random()*100+"vw"; document.body.appendChild(e);
-                    setTimeout(() => e.remove(), 1000);
-                }
-                document.getElementById('gameFeedback').innerText = "Try Again!";
-            }
+        const qs = [{q:"Who created the integral symbol?", a:"leibniz"}, {q:"In what century did Riemann live?", a:"19th"}];
+        let i = 0;
+        function load(){ document.getElementById('q').innerText = qs[i].q; document.getElementById('fb').innerText=""; document.getElementById('ans').value="";}
+        function check(){
+            const u = document.getElementById('ans').value.toLowerCase();
+            if(u === qs[i].a){ confetti({colors:['#ff007f']}); }
+            else { document.getElementById('fb').innerText = "Wrong! Correct: " + qs[i].a + " 👎"; }
+            i = (i+1)%qs.length; setTimeout(load, 2000);
         }
+        load();
     </script>
 </body>
 </html>
