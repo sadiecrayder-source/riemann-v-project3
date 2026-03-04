@@ -2,48 +2,68 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Riemann-V | System Audit</title>
+    <title>Riemann-V | Verify</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root { --pink: #ff007f; --bg: #0a0508; }
-        body { background: var(--bg); color: white; font-family: 'Inter'; margin: 0; text-align: center; overflow-x: hidden; }
-        
-        /* Navigation */
-        nav { background: #1a0d14; padding: 1rem 5%; display: flex; justify-content: space-between; border-bottom: 2px solid var(--pink); position: sticky; top: 0; z-index: 1000; }
+        body { background: var(--bg); color: white; font-family: 'Inter'; margin: 0; text-align: center; }
+        nav { background: #1a0d14; padding: 1rem 5%; display: flex; justify-content: space-between; border-bottom: 2px solid var(--pink); position: sticky; top: 0; }
         nav a { color: white; text-decoration: none; margin-left: 20px; opacity: 0.6; font-weight: bold; }
-        nav a.active { opacity: 1; color: var(--pink); }
-
-        /* Audit Card */
-        .card { max-width: 650px; margin: 80px auto; padding: 50px; background: #1a0d14; border: 1px solid var(--pink); border-radius: 30px; box-shadow: 0 0 30px rgba(255,0,127,0.15); position: relative; }
-        h1 { font-family: 'Orbitron'; color: var(--pink); margin-bottom: 20px; }
-        
-        .math-box { background: rgba(0,0,0,0.4); padding: 20px; border-radius: 15px; margin: 25px 0; border: 1px solid #333; }
-        
-        input { background: transparent; border: 1px solid var(--pink); color: var(--pink); padding: 15px; font-size: 1.5rem; text-align: center; border-radius: 10px; width: 220px; font-family: 'Orbitron'; }
-        
-        .btn { background: var(--pink); color: white; border: none; padding: 15px 40px; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 25px; font-family: 'Orbitron'; transition: 0.3s; }
-        .btn:hover { transform: scale(1.05); filter: brightness(1.2); }
-
-        /* Emoji Effects */
-        .emoji-drop { position: fixed; font-size: 3rem; animation: fall 1s forwards; pointer-events: none; z-index: 2000; }
-        @keyframes fall { from { top: -50px; opacity: 1; } to { top: 100vh; opacity: 0; } }
-
-        #feedback { margin-top: 30px; font-weight: bold; font-family: 'Orbitron'; height: 30px; }
+        .exam-card { max-width: 600px; margin: 80px auto; padding: 40px; background: #1a0d14; border: 1px solid var(--pink); border-radius: 20px; }
+        .diff { font-weight: bold; font-family: 'Orbitron'; margin-bottom: 10px; }
+        .hard { color: #ff4444; } .medium { color: #ffff44; } .easy { color: #44ff44; }
+        button { padding: 10px 20px; background: var(--pink); color: white; border: none; cursor: pointer; margin-top: 10px; border-radius: 5px; }
+        #cont { display: none; background: #7000ff; }
     </style>
 </head>
 <body>
     <nav>
-        <div style="font-family:'Orbitron'; color:var(--pink)">RIEMANN-V // AUDIT</div>
-        <div>
-            <a href="index.html">HOME</a>
-            <a href="lecture.html">LECTURE</a>
-            <a href="visualizer.html">SIMULATOR</a>
-            <a href="archives.html">ARCHIVES</a>
-            <a href="audit.html" class="active">VERIFY</a>
-        </div>
+        <div style="font-family:'Orbitron'; color:var(--pink)">RIEMANN-V</div>
+        <div><a href="index.html">HOME</a><a href="lecture.html">LECTURE</a><a href="visualizer.html">SIMULATOR</a><a href="archives.html">ARCHIVES</a><a href="audit.html" style="color:var(--pink); opacity:1">VERIFY</a></div>
     </nav>
-
-    <div class="card">
-        <h1>Final Integrity
+    <div class="exam-card">
+        <div id="diffTag" class="diff"></div>
+        <p id="qText" style="font-size:1.2rem;"></p>
+        <input type="text" id="userAns" style="padding:10px; background:transparent; border:1px solid var(--pink); color:white;">
+        <br>
+        <button id="subBtn" onclick="verify()">SUBMIT</button>
+        <button id="cont" onclick="nextQ()">CONTINUE</button>
+        <p id="fb"></p>
+    </div>
+    <script>
+        const bank = [
+            {d: "easy", q: "Trivia: Is f(x)=x increasing?", a: "yes", exp: "f(x)=x has a positive slope.", col: "#44ff44"},
+            {d: "medium", q: "Table: If widths are 1 and heights are 2, 4. Sum?", a: "6", exp: "1*2 + 1*4 = 6.", col: "#ffff44"},
+            {d: "hard", q: "Math: f(x)=x^2, [0,2], n=2, Right Sum?", a: "5", exp: "f(1)=1, f(2)=4. 1+4=5.", col: "#ff4444"}
+        ];
+        let cur, att = 3;
+        function nextQ() {
+            cur = bank[Math.floor(Math.random()*bank.length)];
+            att = 3; document.getElementById('fb').innerText = ""; 
+            document.getElementById('diffTag').innerText = cur.d.toUpperCase();
+            document.getElementById('diffTag').className = "diff " + cur.d;
+            document.getElementById('qText').innerText = cur.q;
+            document.getElementById('cont').style.display = "none";
+            document.getElementById('subBtn').style.display = "inline";
+            document.getElementById('userAns').value = "";
+        }
+        function verify() {
+            const u = document.getElementById('userAns').value.toLowerCase();
+            if(u === cur.a) {
+                confetti({colors: [cur.col]});
+                document.getElementById('fb').innerText = "Correct!";
+                showCont();
+            } else {
+                att--;
+                if(att > 0) { document.getElementById('fb').innerText = `Incorrect, ${att} attempts left!`; }
+                else { 
+                    document.getElementById('fb').innerText = `Failed. Correct: ${cur.a}. Why: ${cur.exp}`;
+                    showCont();
+                }
+            }
+        }
+        function showCont(){ document.getElementById('cont').style.display="inline"; document.getElementById('subBtn').style.display="none"; }
+        nextQ();
+    </script>
+</body>
+</html>
